@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block titulo %}Mural da Turma{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header class="topo">
+    <h1>Mural da Turma</h1>
+    <p>Deixe um recado, uma dúvida ou um aviso para os colegas.</p>
+  </header>
+
+  {% with mensagens = get_flashed_messages(with_categories=true) %}
+    {% if mensagens %}
+      <div class="avisos" role="status">
+        {% for categoria, texto in mensagens %}
+          <p class="aviso aviso-{{ categoria }}">{{ texto }}</p>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <main class="pagina">
+    {% block conteudo %}{% endblock %}
+  </main>
+
+  <footer class="rodape">
+    Feito com Python, Flask e SQLite.
+  </footer>
+</body>
+</html>

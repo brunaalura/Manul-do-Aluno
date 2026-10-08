@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block conteudo %}
+<section class="novo" aria-labelledby="titulo-form">
+  <h2 id="titulo-form">Novo recado</h2>
+  <form method="post" action="{{ url_for('criar_recado') }}">
+    <label for="nome">Seu nome</label>
+    <input id="nome" name="nome" maxlength="60" required>
+
+    <label for="turma">Turma</label>
+    <select id="turma" name="turma" required>
+      <option value="" disabled selected>Escolha a turma</option>
+      {% for t in turmas %}
+        <option value="{{ t }}">{{ t }}</option>
+      {% endfor %}
+    </select>
+
+    <label for="mensagem">Mensagem</label>
+    <textarea id="mensagem" name="mensagem" rows="4" maxlength="280" required></textarea>
+
+    <button type="submit">Publicar recado</button>
+  </form>
+</section>
+
+<section class="lista" aria-labelledby="titulo-lista">
+  <div class="lista-topo">
+    <h2 id="titulo-lista">
+      {% if filtro %}Recados do {{ filtro }}{% else %}Todos os recados{% endif %}
+    </h2>
+    <form method="get" action="{{ url_for('index') }}" class="filtro">
+      <label for="filtro-turma">Filtrar por turma</label>
+      <select id="filtro-turma" name="turma" onchange="this.form.submit()">
+        <option value="">Todas</option>
+        {% for t in turmas %}
+          <option value="{{ t }}" {% if t == filtro %}selected{% endif %}>{{ t }}</option>
+        {% endfor %}
+      </select>
+      <noscript><button type="submit">Filtrar</button></noscript>
+    </form>
+  </div>
+
+  {% if recados %}
+    {% for r in recados %}
+      <article class="recado">
+        <p class="recado-texto">{{ r['mensagem'] }}</p>
+        <p class="recado-autor">
+          <strong>{{ r['nome'] }}</strong>
+          <span class="turma">{{ r['turma'] }}</span>
+          <time>{{ r['criado_em'] }}</time>
+        </p>
+        <details class="apagar">
+          <summary>Apagar</summary>
+          <form method="post" action="{{ url_for('apagar_recado', recado_id=r['id']) }}">
+            <label for="senha-{{ r['id'] }}">Senha do professor</label>
+            <input id="senha-{{ r['id'] }}" name="senha" type="password" required>
+            <button type="submit">Apagar recado</button>
+          </form>
+        </details>
+      </article>
+    {% endfor %}
+  {% else %}
+    <p class="vazio">Nenhum recado por aqui ainda. Use o formulário para publicar o primeiro.</p>
+  {% endif %}
+</section>
+{% endblock %}
